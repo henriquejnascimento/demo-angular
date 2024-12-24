@@ -6,7 +6,7 @@ import { MatSort } from '@angular/material/sort';
 @Component({
   selector: 'crud',
   templateUrl: './base-list.component.html',
-  styleUrls: ['./base-list.component.css']
+  styleUrls: ['./base-list.component.scss']
 })
 export class BaseListComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
