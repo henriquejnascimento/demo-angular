@@ -13,7 +13,7 @@ import { SharedModule } from '../../shared/shared.module';
     SharedModule
 ]
 })
-export class ProductComponent extends BaseListComponent implements OnInit {
+export class ProductListComponent extends BaseListComponent implements OnInit {
   ngOnInit() {
     let title = "Product";
     let columns = [
