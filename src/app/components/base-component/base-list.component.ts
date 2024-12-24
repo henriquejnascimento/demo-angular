@@ -1,12 +1,32 @@
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
+import { CommonModule } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule } from '@angular/material/menu';
+import { FormsModule } from '@angular/forms';
+import { MatSortModule } from '@angular/material/sort';
+
 @Component({
-  selector: 'crud',
+  selector: 'base-list',
   templateUrl: './base-list.component.html',
-  styleUrls: ['./base-list.component.scss']
+  styleUrls: ['./base-list.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatMenuModule,
+    FormsModule,
+    MatSortModule,
+  ]  
 })
 export class BaseListComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
@@ -44,7 +64,9 @@ export class BaseListComponent implements AfterViewInit {
     this.pageSizeOptions = pageSizeOptions;
 
     this.fillFilters();
-    this.updateFilterPredicate();    
+    this.updateFilterPredicate();
+
+    this.calculateTotalPages();
   }
 
   fillFilters() {

@@ -1,31 +1,19 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatMenuModule } from '@angular/material/menu';
-import { FormsModule } from '@angular/forms';
-import { MatSortModule } from '@angular/material/sort';
 import { BaseListComponent } from '../base-component/base-list.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-crud',
-  templateUrl: './product.component.html',
-  styleUrls: ['./product.component.scss'],
+  templateUrl: '../base-component/base-list.component.html',
+  styleUrls: ['../base-component/base-list.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatMenuModule,
-    FormsModule,
-    MatSortModule,
-  ]
+    SharedModule
+]
 })
-export class ProductComponent extends BaseListComponent implements OnInit, AfterViewInit {
+export class ProductComponent extends BaseListComponent implements OnInit {
   ngOnInit() {
     let title = "Product";
     let columns = [
@@ -52,35 +40,6 @@ export class ProductComponent extends BaseListComponent implements OnInit, After
     ];
 
     this.setup(title, columns, data);
-
-    this.calculateTotalPages();
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-
-
-
-
-
-  logVisibleIds() {
-    if (!this.paginator || !this.sort) return;
-
-    const sortedData = this.dataSource.sortData(this.dataSource.filteredData, this.sort);
-
-    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-    const endIndex = startIndex + this.paginator.pageSize;
-
-    const currentPageData = sortedData.slice(startIndex, endIndex);
-    const visibleIds = currentPageData.map(item => item.id);
-
-    visibleIds.forEach(element => {
-      this.selectedIds.add(element);
-    });
-    
-    console.log("IDs visíveis na tabela:", visibleIds);
-  }
 }
