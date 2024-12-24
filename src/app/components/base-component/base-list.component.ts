@@ -235,10 +235,6 @@ export class BaseListComponent implements AfterViewInit {
     return ['select', ...this.getVisibleColumns()];
   }
 
-  logSelectedIds() {
-    console.log("IDs selecionados:", Array.from(this.selectedIds));
-  }
-
 
 
 

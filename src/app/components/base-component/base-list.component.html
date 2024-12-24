@@ -1,6 +1,6 @@
 <h1>Gerenciar {{ title }}</h1>
 
-<button mat-button [matMenuTriggerFor]="menu">Selecionar Colunas</button>
+<button mat-raised-button color="primary" [matMenuTriggerFor]="menu">Selecionar Colunas</button>
 <mat-menu #menu="matMenu">
   <ng-container *ngFor="let column of columns">
     <button mat-menu-item>
@@ -10,8 +10,6 @@
     </button>
   </ng-container>
 </mat-menu>
-
-<button mat-raised-button color="primary" (click)="logSelectedIds()">Log IDs Selecionados</button>
 
 <table mat-table [dataSource]="dataSource" matSort>
   <ng-container matColumnDef="select">
