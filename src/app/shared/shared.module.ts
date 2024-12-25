@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatMenuModule,
     FormsModule,
     MatSortModule,
+    MatIconModule,
   ],
   exports: [
     CommonModule,
@@ -28,6 +30,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatMenuModule,
     FormsModule,
     MatSortModule,
+    MatIconModule,
   ]
 })
 export class SharedModule {}

@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { MatSortModule } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'base-list',
@@ -26,6 +27,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatMenuModule,
     FormsModule,
     MatSortModule,
+    MatIconModule,
   ]  
 })
 export class BaseListComponent implements AfterViewInit {
@@ -223,16 +225,16 @@ export class BaseListComponent implements AfterViewInit {
     // );
     // return currentPageData.every(item => this.selectedIds.has(item.id));
 
-    console.log("isAllCheckboxesChecked: " + this.getCurrentRowIds().every(item => this.selectedIds.has(String(item))))
-    console.log("this.getCurrentRowIds(): " + this.getCurrentRowIds())
-    console.log("this.selectedIds: " + Array.from(this.selectedIds))
+    // console.log("isAllCheckboxesChecked: " + this.getCurrentRowIds().every(item => this.selectedIds.has(String(item))))
+    // console.log("this.getCurrentRowIds(): " + this.getCurrentRowIds())
+    // console.log("this.selectedIds: " + Array.from(this.selectedIds))
 
     return this.getCurrentRowIds().every(item => this.selectedIds.has(item));
   }
 
 
   getAllColumns(): string[] {
-    return ['select', ...this.getVisibleColumns()];
+    return ['select', ...this.getVisibleColumns(), 'actions'];
   }
 
 
@@ -290,5 +292,30 @@ export class BaseListComponent implements AfterViewInit {
     //  this.totalPages = Math.ceil(this.dataSource.data.length / this.paginator.pageSize);    
       this.totalPages = Math.ceil(this.dataSource.filteredData.length / this.paginator.pageSize);  
     }
+  }
+
+  onInputPageChange() {
+    if (this.paginator) {
+      if (this.currentPage < 1) {
+        this.currentPage = 1;
+      } else if (this.currentPage > this.totalPages) {
+        this.currentPage = this.totalPages;
+      }
+
+      this.paginator.pageIndex = this.currentPage - 1;
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+
+  viewDetails(element: any) {
+    console.log('Visualizando detalhes do item:', element);
+  }
+  
+  editItem(element: any) {
+    console.log('Editando item:', element);
+  }
+  
+  deleteItem(id: string) {
+    console.log('Excluindo item com id:', id);
   }
 }
