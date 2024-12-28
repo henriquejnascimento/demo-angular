@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseListComponent } from '../base-component/base-list.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ProductService } from '../../services/product.service';
 import { PaginatedResponse } from '../models/paginated-response.model';
 import { Product } from '../models/product.model';
-import { MatTableDataSource } from '@angular/material/table';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-crud',
@@ -26,15 +26,16 @@ export class ProductListComponent extends BaseListComponent implements OnInit {
     // { label: 'status', visibility: true },
   ];
   data: any[] = [];
-  override isLoading: boolean = true; // TODO MOVE
-
+  
   constructor(private productService: ProductService, changeDetectorRef: ChangeDetectorRef) {
     super(changeDetectorRef);
   }
 
   ngOnInit() {
     this.isLoading = true;
-    this.loadData(this.currentPageIndex, this.pageSize)
+    this.loadData(this.currentPageIndex, this.pageSize);
+    this.isLoading = false;
+    // this.changeDetectorRef.detectChanges();
   }
 
   override loadData(
@@ -44,18 +45,11 @@ export class ProductListComponent extends BaseListComponent implements OnInit {
 
     this.productService.getData(currentPageIndex, pageSize, filters).subscribe({
       next: (response: PaginatedResponse<Product>) => {
-        this.setup(this.title, this.columns, response.content);
-        this.data = response.content;
-        this.totalPages = response.totalPages;
-        this.totalElements = response.totalElements;
-        this.pageSize = pageSize;
-        this.isLoading = false;
-        this.changeDetectorRef.detectChanges();
+        //this.data = response.content;
+        this.setup(this.title, this.columns, response);
       },
       error: (error) => {
         console.error('Erro ao carregar dados:', error);
-        this.isLoading = false;
-        this.changeDetectorRef.detectChanges();
       }
     });
   }

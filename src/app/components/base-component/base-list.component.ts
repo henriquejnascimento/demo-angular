@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
+import { PaginatedResponse } from '../models/paginated-response.model';
 
 @Component({
   selector: 'base-list',
@@ -35,7 +36,7 @@ export class BaseListComponent implements AfterViewInit {
   @ViewChild(MatSort) sort: MatSort | undefined;
   title!: string;
   columns!: { label: string; visibility: boolean; }[];
-  dataSource!: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   selectedIds: Set<string> = new Set<string>();
   pageSizeOptions!: number[];
   filterValues: { [key: string]: string } = {};
@@ -45,32 +46,61 @@ export class BaseListComponent implements AfterViewInit {
   pageSize: number = 5;
   totalElements: number = 0;
   // TODO ADD data variavel
-
+  
   isCheckboxAll: boolean = false;
   isLoading: boolean = true;
   protected changeDetectorRef: ChangeDetectorRef;
 
   constructor(changeDetectorRef: ChangeDetectorRef) {
     this.changeDetectorRef = changeDetectorRef;
+    
+    // this.totalElements = 17;
+    // this.totalPages = 4;
+    //console.log("XX - this.totalElements: " + this.totalElements)
   }
 
   // constructor(private changeDetectorRef: ChangeDetectorRef) { }
 
-  setup(
+  setup<T>(
     title: string,
     columns: { label: string; visibility: boolean }[],
-    data: any[],
+    data: PaginatedResponse<T>,
     pageSizeOptions: number[] = [5, 10, 20]
   ) {
+
     this.title = title;
     this.columns = columns;
-    this.dataSource = new MatTableDataSource(data);
+    this.dataSource = new MatTableDataSource(data.content);
     this.pageSizeOptions = pageSizeOptions;
 
+
+    this.totalPages = data.totalPages;
+    this.totalElements = data.totalElements;
+ 
+    
+    if (this.paginator) {
+      this.paginator.length = this.totalElements;
+      this.paginator.pageSize = this.pageSize;
+      this.paginator.pageIndex = this.currentPageIndex;
+    }
+
+    // if (this.paginator) {
+    //   this.paginator.page.subscribe((event: PageEvent) => {
+    //     this.currentPage = event.pageIndex + 1;
+    //     this.currentPageIndex = event.pageIndex;
+    //     this.pageSize = event.pageSize;
+    //     this.calculateTotalPages();
+    //     this.loadData(this.currentPageIndex, this.pageSize, this.filterValues);
+    //   });
+    // }
+
+    if (this.sort) {
+      this.dataSource.sort = this.sort;
+    }
+    
+    this.calculateTotalPages();
     this.fillFilters();
     this.updateFilterPredicate();
-
-    this.calculateTotalPages();
   }
 
   fillFilters() {
@@ -79,12 +109,25 @@ export class BaseListComponent implements AfterViewInit {
     // });
   }
 
+  // updateFilterPredicate() {
+  //   this.dataSource.filterPredicate = (data: any, filter: string) => {
+  //     const filters = JSON.parse(filter);
+  //     console.log(filters)
+  //     return Object.keys(filters).every(key => {
+  //       return data[key].toString().toLowerCase().includes(filters[key].toLowerCase());
+  //     });
+  //   };
+  // }
   updateFilterPredicate() {
     this.dataSource.filterPredicate = (data: any, filter: string) => {
       const filters = JSON.parse(filter);
-      console.log(filters)
+      console.log(filters);
+      
       return Object.keys(filters).every(key => {
-        return data[key].toString().toLowerCase().includes(filters[key].toLowerCase());
+        const dataValue = data[key] ?? '';
+        const filterValue = filters[key] ?? '';
+  
+        return dataValue.toString().toLowerCase().includes(filterValue.toLowerCase());
       });
     };
   }
@@ -167,6 +210,7 @@ export class BaseListComponent implements AfterViewInit {
         this.onSortChange();
       });
     }
+    
   }
 
   onPageChange(event: PageEvent) {
@@ -174,7 +218,7 @@ export class BaseListComponent implements AfterViewInit {
     this.currentPageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.calculateTotalPages();
-    this.loadData(event.pageIndex, this.pageSize);
+    this.loadData(event.pageIndex, this.pageSize, this.filterValues);
   }
 
   onSortChange() {
@@ -182,20 +226,48 @@ export class BaseListComponent implements AfterViewInit {
     console.log("before onSortChange: " + this.isCheckboxAll)
     //this.isCheckboxAll = this.allSelected(); // Verifica se todos os itens visíveis estão selecionados
     console.log("after onSortChange: " + this.isCheckboxAll)
+
+
+
+    const sortDirection = this.sort?.direction ?? '';
+    const sortColumn = this.sort?.active ?? '';
+    
+    if (sortColumn && sortDirection) {
+      this.filterValues['sort'] = `${sortColumn},${sortDirection}`;
+    } else {
+      delete this.filterValues['sort'];
+    }
+  
+    this.dataSource.filter = JSON.stringify(this.filterValues);
+  
+    
+    if (this.paginator) {
+      console.log("this.paginator.pageSize: " + this.paginator.pageSize)
+      
+    }
+    
+    this.loadData(0, 5, this.filterValues);
+    
   }
 
   calculateTotalPages() {
-    if (this.paginator) {
-      this.totalElements = this.dataSource.filteredData.length;
-      this.totalPages = Math.ceil(this.totalElements / this.paginator.pageSize);
-    }
+    // if (this.paginator && this.dataSource) {
+      //this.totalElements = Object.keys(this.filterValues).length > 0 ? this.dataSource.filteredData.length : this.totalElements;
+      this.totalPages = Math.ceil(this.totalElements / this.pageSize);
+
+      console.log("calculateTotalPages - this.dataSource.filteredData.length: " + this.dataSource.filteredData.length)
+       console.log('calculateTotalPages - this.totalElements:', this.totalElements);
+      // console.log('filteredDataLength:', filteredDataLength);
+       console.log('calculateTotalPages - this.totalPages:', this.totalPages);
+    // }
   }
 
   onInputPageChange() {
     if (this.paginator && this.sort) {
-      this.paginator.pageIndex = this.currentPage - 1;
-      this.loadData(this.paginator.pageIndex, this.pageSize);
-    }
+      this.paginator.pageIndex = this.currentPage - 1;     
+      this.currentPageIndex = this.currentPage - 1;  
+      this.loadData(this.paginator.pageIndex, this.paginator.pageSize, this.filterValues);
+    }  
   }
 
   viewDetails(element: any) {
