@@ -17,8 +17,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
   imports: [
     CommonModule,
     SharedModule,
-    MatDialogModule
-]
+    MatDialogModule,
+  ]
 })
 export class ProductListComponent extends BaseListComponent implements OnInit {
   override title: string = "Products"; // TODO check override
