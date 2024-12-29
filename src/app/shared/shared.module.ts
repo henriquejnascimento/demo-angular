@@ -8,6 +8,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   imports: [
@@ -20,6 +22,8 @@ import { MatIconModule } from '@angular/material/icon';
     FormsModule,
     MatSortModule,
     MatIconModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
   ],
   exports: [
     CommonModule,
@@ -31,6 +35,8 @@ import { MatIconModule } from '@angular/material/icon';
     FormsModule,
     MatSortModule,
     MatIconModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
   ]
 })
 export class SharedModule {}

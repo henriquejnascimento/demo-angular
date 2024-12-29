@@ -3,15 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PaginatedResponse } from '../components/models/paginated-response.model';
 import { Product } from '../components/models/product.model';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class ProductService extends BaseService<Product> {
 
-  private baseUrl: string = 'http://localhost:8081/products';
+  override baseUrl: string = 'http://localhost:8081/products';
 
-  constructor(private http: HttpClient) { }
+  constructor(http: HttpClient) { 
+    super(http);    
+  }
 
   getData(
     page: number = 0,

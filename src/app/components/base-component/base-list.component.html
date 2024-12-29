@@ -1,4 +1,6 @@
-<div *ngIf="isLoading">Loading...</div>
+<div *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+</div>
 <div *ngIf="!isLoading">
   <h1>{{ title }} Management</h1>
 

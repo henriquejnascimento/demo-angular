@@ -1,11 +1,13 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseListComponent } from '../base-component/base-list.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ProductService } from '../../services/product.service';
 import { PaginatedResponse } from '../models/paginated-response.model';
 import { Product } from '../models/product.model';
-import { PageEvent } from '@angular/material/paginator';
+
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-crud',
@@ -14,8 +16,9 @@ import { PageEvent } from '@angular/material/paginator';
   standalone: true,
   imports: [
     CommonModule,
-    SharedModule
-  ]
+    SharedModule,
+    MatDialogModule
+]
 })
 export class ProductListComponent extends BaseListComponent implements OnInit {
   override title: string = "Products"; // TODO check override
@@ -27,8 +30,12 @@ export class ProductListComponent extends BaseListComponent implements OnInit {
   ];
   data: any[] = [];
   
-  constructor(private productService: ProductService, changeDetectorRef: ChangeDetectorRef) {
-    super(changeDetectorRef);
+  constructor(
+    private productService: ProductService, 
+    changeDetectorRef: ChangeDetectorRef,
+    dialog: MatDialog
+  ) {
+    super(productService, changeDetectorRef, dialog);
   }
 
   ngOnInit() {
@@ -53,5 +60,5 @@ export class ProductListComponent extends BaseListComponent implements OnInit {
       }
     });
   }
-
+  
 }

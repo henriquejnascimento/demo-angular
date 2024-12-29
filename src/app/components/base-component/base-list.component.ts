@@ -12,7 +12,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { FormsModule } from '@angular/forms';
 import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+
 import { PaginatedResponse } from '../models/paginated-response.model';
+import { BaseService } from '../../services/base.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+
+// export const BASE_SERVICE = new InjectionToken<BaseService<any>>('BaseService');
+
 
 @Component({
   selector: 'base-list',
@@ -29,6 +38,8 @@ import { PaginatedResponse } from '../models/paginated-response.model';
     FormsModule,
     MatSortModule,
     MatIconModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
   ]
 })
 export class BaseListComponent implements AfterViewInit {
@@ -49,14 +60,17 @@ export class BaseListComponent implements AfterViewInit {
   
   isCheckboxAll: boolean = false;
   isLoading: boolean = true;
-  protected changeDetectorRef: ChangeDetectorRef;
+  protected changeDetectorRef: ChangeDetectorRef; // TODO REMOVE
+  private service: BaseService<any>;
 
-  constructor(changeDetectorRef: ChangeDetectorRef) {
+  constructor(
+    service: BaseService<any>, 
+    changeDetectorRef: ChangeDetectorRef,
+    private dialog: MatDialog
+  ) {
+    this.service  = service;
     this.changeDetectorRef = changeDetectorRef;
-    
-    // this.totalElements = 17;
-    // this.totalPages = 4;
-    //console.log("XX - this.totalElements: " + this.totalElements)
+
   }
 
   // constructor(private changeDetectorRef: ChangeDetectorRef) { }
@@ -278,21 +292,56 @@ export class BaseListComponent implements AfterViewInit {
     console.log('Editando item:', element);
   }
 
-  deleteItem(id: string) {
-    console.log('Excluindo item com id:', id);
+  deleteItem(id: any): void {    
+    console.log('deleteItem() > Excluindo item com id:', [id]);
+    this.deleteConfirmDialog([id]);
   }
 
-  loadData(currentPageIndex: number, pageSize: number, filters: { [key: string]: string } = {}) { }
-
-  deleteItems() {
+  deleteItems() { // TODO rename deleteAllChecked
+    console.log("deleteItems()")
     if (this.selectedIds.size === 0) {
       console.log("Nenhum item selecionado para exclusão.");
       return;
     }
 
-    const itemsToDelete = Array.from(this.selectedIds);
-    console.log("Deleting items with ids: ", itemsToDelete);
+    const itemsToDelete = Array.from(this.selectedIds); // TODO REMOVE
+    console.log("Deleting items with ids: ", itemsToDelete); // TODO REMOVE
+
+    this.deleteConfirmDialog(Array.from(this.selectedIds))
   }
+
+  deleteConfirmDialog(ids: any[]) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: {
+        title: 'Deletion confirmation',
+        message: `${ids.length} records will be deleted, do you want to continue?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {        
+        console.log('Excluindo ...');       
+        this.delete(ids);
+      }
+    }); 
+  }
+
+  delete(ids: any[]) {
+    this.service.delete(ids).subscribe({
+      next: () => {
+        console.log(`Items com IDs ${ids} excluídos com sucesso.`);
+        if (this.paginator) {
+          this.loadData(this.paginator.pageIndex, this.paginator.pageSize, this.filterValues);
+        } 
+      },
+      error: (err) => {
+        console.error('Erro ao excluir os items:', err);
+      }
+    });
+  }
+
+  loadData(currentPageIndex: number, pageSize: number, filters: { [key: string]: string } = {}) { }
 
   clearSelection() {
     this.selectedIds.clear();
