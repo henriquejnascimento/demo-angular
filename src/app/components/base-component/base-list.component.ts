@@ -46,7 +46,10 @@ export class BaseListComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   @ViewChild(MatSort) sort: MatSort | undefined;
   title!: string;
-  columns!: { label: string; visibility: boolean; }[];
+  columns!: { 
+    label: string; 
+    visibility: boolean; 
+  }[];
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   selectedIds: Set<string> = new Set<string>();
   pageSizeOptions!: number[];
