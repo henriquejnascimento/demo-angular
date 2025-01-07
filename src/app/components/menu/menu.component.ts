@@ -4,9 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MenuNavItem } from '../models/menu-nav-item.model';
 import { RouterModule } from '@angular/router';
 import { MenuItemComponent } from "../menu-item/menu-item.component";
+import { MenuNavItem } from '../../models/menu-nav-item.model';
 
 @Component({
   selector: 'app-menu',
