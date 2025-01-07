@@ -1,19 +1,24 @@
 import { Routes } from '@angular/router';
 import { ProductListComponent } from './components/product/product-list.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { ProductFormComponent } from './components/product-form/product-form.component';
 
 export const routes: Routes = [
   {
-    path: 'home',
+    path: 'test',
     component: MenuComponent
   },
   {
-    path: 'crud',
+    path: 'products',
     component: ProductListComponent
   },
   {
+    path: 'products/create',
+    component: ProductFormComponent
+  },  
+  {
     path: '',
-    redirectTo: '/crud',
+    redirectTo: '/products',
     pathMatch: 'full'
   }
 ];
