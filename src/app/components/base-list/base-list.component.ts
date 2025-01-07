@@ -16,7 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 
-import { PaginatedResponse } from '../models/paginated-response.model';
+import { PaginatedResponse } from '../../models/paginated-response.model';
 import { BaseService } from '../../services/base.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 

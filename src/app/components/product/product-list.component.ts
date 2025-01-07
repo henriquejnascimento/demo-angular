@@ -1,18 +1,18 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseListComponent } from '../base-component/base-list.component';
+import { BaseListComponent } from '../base-list/base-list.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ProductService } from '../../services/product.service';
-import { PaginatedResponse } from '../models/paginated-response.model';
-import { Product } from '../models/product.model';
+import { PaginatedResponse } from '../../models/paginated-response.model';
+import { Product } from '../../models/product.model';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 
 @Component({
   selector: 'app-crud',
-  templateUrl: '../base-component/base-list.component.html',
-  styleUrls: ['../base-component/base-list.component.scss'],
+  templateUrl: '../base-list/base-list.component.html',
+  styleUrls: ['../base-list/base-list.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
