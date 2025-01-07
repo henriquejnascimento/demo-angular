@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PaginatedResponse } from '../components/models/paginated-response.model';
-import { Product } from '../components/models/product.model';
+import { PaginatedResponse } from '../models/paginated-response.model';
+import { Product } from '../models/product.model';
 import { BaseService } from './base.service';
 
 @Injectable({
