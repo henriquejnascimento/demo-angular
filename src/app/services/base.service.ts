@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PaginatedResponse } from '../components/models/paginated-response.model';
+import { PaginatedResponse } from '..//models/paginated-response.model';
 
 @Injectable({
   providedIn: 'root'
