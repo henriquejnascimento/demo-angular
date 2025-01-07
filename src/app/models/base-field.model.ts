@@ -12,4 +12,5 @@ export class BaseField {
   mask? :string;
   class? :string;
   style? :string;
+  order?: number;
 }

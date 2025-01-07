@@ -1,0 +1,56 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ng-container *ngFor="let field of fields">
+        <ng-container [ngSwitch]="field.type">
+            <mat-form-field *ngSwitchCase="(FORM_INPUT_TYPE.includes(field.type)) ? field.type : null">
+                <mat-label>{{field.label}}</mat-label>
+                <input matInput 
+                    [formControlName]="field.name" 
+                    [type]="field.type" 
+                    [name]="field.name"
+                    [placeholder]="field.placeholder || ''" 
+                    [mask]="field.mask || ''" 
+                    [class]="field.class || ''"
+                    [style]="field.style || ''"/>
+    
+                <!-- <mat-error *ngIf="form.get(field.name)?.hasError('required')"></mat-error> -->
+                <mat-error
+                    *ngIf="form.get(field.name)?.invalid && (form.get(field.name)?.dirty || form.get(field.name)?.touched)">
+                    {{ getErrorMessage(form.get(field.name)) }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field *ngSwitchCase="'textarea'">
+                <mat-label>{{ field.label }}</mat-label>
+                <textarea matInput 
+                    [formControlName]="field.name" 
+                    [value]="field.value"
+                    [placeholder]="field.placeholder || ''">
+                </textarea>
+            </mat-form-field>
+
+            <ng-container *ngSwitchCase="'checkbox'">
+                <mat-checkbox 
+                    [formControlName]="field.name">
+                    {{ field.label }}
+                </mat-checkbox>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'select'">
+                <mat-form-field>
+                    <mat-label>{{ field.label }}</mat-label>
+                    <mat-select>
+                        <mat-option value="one">First option</mat-option>
+                        <mat-option value="two">Second option</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'radioButton'">
+                <mat-radio-group aria-label="Select an option">
+                    <mat-radio-button value="1">Option 1</mat-radio-button>
+                    <mat-radio-button value="2">Option 2</mat-radio-button>
+                </mat-radio-group>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</form>

@@ -1,0 +1,25 @@
+export enum FormFieldType {
+    // FormInputTypes
+    COLOR = 'color',
+    DATE = 'date',
+    DATETIME_LOCAL = 'datetime-local', 
+    EMAIL = 'email',
+    MONTH = 'month',
+    NUMBER = 'number',
+    PASSWORD = 'password',
+    SEARCH = 'search',
+    TEL = 'tel',
+    TEXT = 'text',
+    TIME = 'time',
+    URL = 'url',
+    WEEK = 'week',
+    
+    TEXTAREA = 'textarea',
+    CHECKBOX = 'checkbox',
+    SELECT = 'select',
+    SUBMIT = 'submit',
+    BUTTON = 'button',
+    RESET = 'reset',
+    HIDDEN = 'hidden',
+    FILE = 'file',
+}
