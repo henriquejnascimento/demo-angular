@@ -1,3 +1,5 @@
+<h1>{{getTitle()}}</h1>
+
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <ng-container *ngFor="let field of fields">
         <ng-container [ngSwitch]="field.type">
@@ -29,28 +31,39 @@
             </mat-form-field>
 
             <ng-container *ngSwitchCase="'checkbox'">
-                <mat-checkbox 
-                    [formControlName]="field.name">
-                    {{ field.label }}
-                </mat-checkbox>
+                <ng-container *ngFor="let data of field.data">
+                    <mat-checkbox 
+                        [formControlName]="data.value">
+                        {{data.label}}
+                    </mat-checkbox>
+                </ng-container>                
             </ng-container>
 
             <ng-container *ngSwitchCase="'select'">
                 <mat-form-field>
-                    <mat-label>{{ field.label }}</mat-label>
-                    <mat-select>
-                        <mat-option value="one">First option</mat-option>
-                        <mat-option value="two">Second option</mat-option>
+                    <mat-label>{{field.label}}</mat-label>
+                    <mat-select [formControlName]="field.name" [required]="isRequired(field.validators)">
+                        @for (data of field.data; track data) {
+                            <mat-option [value]="data.value">{{data.label}}</mat-option>
+                        }
                     </mat-select>
                 </mat-form-field>
             </ng-container>
 
-            <ng-container *ngSwitchCase="'radioButton'">
+            <ng-container *ngSwitchCase="'radio'">
                 <mat-radio-group aria-label="Select an option">
-                    <mat-radio-button value="1">Option 1</mat-radio-button>
-                    <mat-radio-button value="2">Option 2</mat-radio-button>
+                    <ng-container *ngFor="let data of field.data">
+                        <mat-radio-button value="{{data.value}}">{{data.label}}</mat-radio-button>
+                    </ng-container>                    
                 </mat-radio-group>
             </ng-container>
         </ng-container>
     </ng-container>
+
+    <button (click)="cancel()" class="botao-cancelar" type="button">Cancel</button>
+    <button            
+      type="submit"
+      [disabled]="isSubmitting">
+      {{btnSubmitLabel}}
+    </button>    
 </form>

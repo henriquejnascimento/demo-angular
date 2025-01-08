@@ -7,6 +7,7 @@ import { PaginatedResponse } from '../../models/paginated-response.model';
 import { Product } from '../../models/product.model';
 
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -32,10 +33,11 @@ export class ProductListComponent extends BaseListComponent implements OnInit {
   
   constructor(
     private productService: ProductService, 
+    router: Router,
     changeDetectorRef: ChangeDetectorRef,
     dialog: MatDialog
   ) {
-    super(productService, changeDetectorRef, dialog);
+    super(productService, router, changeDetectorRef, dialog);
   }
 
   ngOnInit() {

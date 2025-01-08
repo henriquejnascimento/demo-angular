@@ -11,6 +11,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormFieldType } from '../../enums/form-field-type';
+import { Router } from '@angular/router';
+import { FormInputData } from '../../models/form-input-data';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-product-form',
@@ -38,8 +41,11 @@ export class ProductFormComponent extends BaseFormComponent {
   override form!: FormGroup;        // TODO MOVE
   override formBuilder: FormBuilder; // TODO MOVE
 
-  constructor(formBuilder: FormBuilder) {
-    super(formBuilder);
+  constructor(
+    private productService: ProductService, 
+    formBuilder: FormBuilder, 
+    router: Router) {
+    super(productService, formBuilder, router);
     this.formBuilder = formBuilder;    
   }
 
@@ -48,10 +54,10 @@ export class ProductFormComponent extends BaseFormComponent {
 	  {
 		  "type": FormFieldType.TEXT,
       "name": "name",
-      "label": "label-test",
+      "label": "Name",
 		  
       //"placeholder": "000.000.000-00", // pode ser o mesmo valor do mask caso mask nao seja null
-      "value": "test",
+      //"value": "test",
       "validators": [Validators.required],
       //"required": true,
       //"errorMessageRequiredField": "Campo obrigatório",
@@ -65,15 +71,46 @@ export class ProductFormComponent extends BaseFormComponent {
        "order": 1,
 	  },
 	  {
-		  "type": FormFieldType.CHECKBOX,
-      "name": "checkbox-name",
-      "label": "checkbox-label",
-      "value": "checkbox-value",
+		  "type": FormFieldType.TEXTAREA,
+      "name": "description",
+      "label": "Description",
+      //"value": "",
       "validators": [Validators.required],
       //"required": true,
       //"errorMessageRequiredField": "Campo obrigatório",
       //"disabled": true,
+      // "data": [
+      //   { 
+      //     "value": "value-1",
+      //     "label": "label-1"
+      //   },
+      //   { 
+      //     "value": "value-2",
+      //     "label": "label-2"
+      //   },        
+      // ],
       "order": 2,
+	  },
+	  {
+		  "type": FormFieldType.SELECT,
+      "name": "status",
+      "label": "Status",
+      //"value": "",
+      "validators": [Validators.required],
+      //"required": true,
+      //"errorMessageRequiredField": "Campo obrigatório",
+      //"disabled": true,
+      "data": [
+        { 
+          "value": "AVAILABLE",
+          "label": "Available"
+        },
+        { 
+          "value": "DAMAGED",
+          "label": "Damaged"
+        },        
+      ],
+      "order": 3,
 	  },    
   ];
   

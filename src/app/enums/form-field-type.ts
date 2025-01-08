@@ -17,6 +17,7 @@ export enum FormFieldType {
     TEXTAREA = 'textarea',
     CHECKBOX = 'checkbox',
     SELECT = 'select',
+    RADIO = 'radio',
     SUBMIT = 'submit',
     BUTTON = 'button',
     RESET = 'reset',

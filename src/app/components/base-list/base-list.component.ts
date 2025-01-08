@@ -19,6 +19,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PaginatedResponse } from '../../models/paginated-response.model';
 import { BaseService } from '../../services/base.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { Router } from '@angular/router';
 
 // export const BASE_SERVICE = new InjectionToken<BaseService<any>>('BaseService');
 
@@ -68,6 +69,7 @@ export class BaseListComponent implements AfterViewInit {
 
   constructor(
     service: BaseService<any>, 
+    private router: Router,
     changeDetectorRef: ChangeDetectorRef,
     private dialog: MatDialog
   ) {
@@ -357,5 +359,9 @@ export class BaseListComponent implements AfterViewInit {
     this.currentPage = 1;
     this.currentPageIndex = 0;
     this.loadData(this.currentPageIndex, this.pageSize, this.filterValues);
+  }
+
+  goToCreatePage(): void {    
+    this.router.navigate([this.router.url + '/create']);
   }
 }

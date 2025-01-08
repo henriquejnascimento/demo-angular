@@ -10,8 +10,10 @@ import { BaseService } from './base.service';
 })
 export class ProductService extends BaseService<Product> {
 
-  override baseUrl: string = 'http://localhost:8081/products';
-
+  override apiUrl: string = 'http://localhost:8081/products';
+  override pathUrl: string = "/products";
+  override name: string = "Products";
+  
   constructor(http: HttpClient) { 
     super(http);    
   }
@@ -20,7 +22,7 @@ export class ProductService extends BaseService<Product> {
     page: number = 0,
     size: number = 10,
     filters: { [key: string]: string } = {}): Observable<PaginatedResponse<Product>> {
-    let url = `${this.baseUrl}?page=${page}&size=${size}`;
+    let url = `${this.apiUrl}?page=${page}&size=${size}`;
     return this.http.get<PaginatedResponse<Product>>(
       this.buildUrl(url, filters)
     );

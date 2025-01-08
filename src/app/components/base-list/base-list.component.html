@@ -5,7 +5,7 @@
   <h1>{{ title }} Management</h1>
 
   <button mat-raised-button color="primary" [matMenuTriggerFor]="menu">Display columns</button>
-  <button mat-raised-button color="primary">New</button>
+  <button mat-raised-button color="primary" (click)="goToCreatePage()">New</button>
 
   <button mat-icon-button [matMenuTriggerFor]="menuActions">
     <mat-icon>more_vert</mat-icon>

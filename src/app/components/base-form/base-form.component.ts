@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BaseField } from '../../models/base-field.model';
@@ -10,6 +10,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormFieldType } from '../../enums/form-field-type';
 import { FORM_INPUT_TYPE as EXTERNAL_FORM_INPUT_TYPE } from '../../constant/form-input-types';
+import { Router } from '@angular/router';
+import { BaseService } from '../../services/base.service';
 
 @Component({
   selector: 'app-base-form',
@@ -34,6 +36,7 @@ import { FORM_INPUT_TYPE as EXTERNAL_FORM_INPUT_TYPE } from '../../constant/form
   ],
 })
 export class BaseFormComponent implements OnInit {
+  service!: BaseService<any>;
   form!: FormGroup;
   fields: BaseField[] = [];
   formBuilder: FormBuilder;
@@ -46,19 +49,26 @@ export class BaseFormComponent implements OnInit {
     pattern: 'Este campo não corresponde ao padrão esperado.',
   };
   readonly FORM_INPUT_TYPE = EXTERNAL_FORM_INPUT_TYPE;
-  
-  constructor(formBuilder: FormBuilder) {
+  btnSubmitLabel :string = 'Save';
+  isSubmitting :boolean = false;
+  isNewRecord! :boolean;
+
+  constructor(
+    service: BaseService<any>, 
+    formBuilder: FormBuilder, 
+    private router: Router) {
+    this.service = service;
     this.formBuilder = formBuilder;
   }
 
   ngOnInit(): void {
     const formGroup: { [key: string]: any } = {};    
-    this.fields.forEach(field => {      
+    this.fields.forEach(field => {
       const validators = field.validators ? field.validators : [];
-      formGroup[field.name] = new FormControl(
-        { value: field.value || '', disabled: field.disabled || false }, 
-        validators
-      );
+        formGroup[field.name] = new FormControl(
+          { value: field.value || '', disabled: field.disabled || false },
+          validators
+        );
     });
 
     this.form = this.formBuilder.group(formGroup);
@@ -66,8 +76,9 @@ export class BaseFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.isSubmitting = true;
     if (this.form.valid) {
-      console.log(this.form.value);
+      this.save();
     } else {
       console.log('Formulário inválido');
     }
@@ -99,6 +110,26 @@ export class BaseFormComponent implements OnInit {
       const orderB = b.order ?? 0;
       return orderA - orderB;
     });
+  }
+
+  cancel() {    
+    const currentPath = window.location.pathname;
+    this.router.navigateByUrl(currentPath.substring(0, currentPath.lastIndexOf('/')));
+  }
+  
+  save() {
+    this.service.create(this.form.value).subscribe(() => {
+      this.form.reset();      
+      this.router.navigateByUrl(this.service.pathUrl)      
+    });
+  }
+
+  isRequired(validators: ValidatorFn[] = []): boolean {
+    return validators ? validators.includes(Validators.required) : false;
+  }
+
+  getTitle() {
+    return "Create " + this.service.name;
   }
 
 }
