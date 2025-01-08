@@ -5,7 +5,7 @@ import { ProductFormComponent } from './components/product-form/product-form.com
 
 export const routes: Routes = [
   {
-    path: 'test',
+    path: 'test-menu',
     component: MenuComponent
   },
   {
