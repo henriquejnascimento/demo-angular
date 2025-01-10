@@ -5,14 +5,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { BaseField } from '../../models/base-field.model';
-// import { FormInputType } from '../../enums/form-input-type';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormFieldType } from '../../enums/form-field-type';
-import { Router } from '@angular/router';
-import { FormInputData } from '../../models/form-input-data';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 
 @Component({
@@ -44,11 +42,11 @@ export class ProductFormComponent extends BaseFormComponent {
   constructor(
     private productService: ProductService, 
     formBuilder: FormBuilder, 
-    router: Router) {
-    super(productService, formBuilder, router);
+    router: Router,
+    activatedRoute: ActivatedRoute) {
+    super(productService, formBuilder, router, activatedRoute);
     this.formBuilder = formBuilder;    
   }
-
   
   override fields: BaseField[] = [
 	  {
@@ -112,6 +110,6 @@ export class ProductFormComponent extends BaseFormComponent {
       ],
       "order": 3,
 	  },    
-  ];
-  
+  ];  
 }
+

@@ -11,8 +11,9 @@ import { BaseService } from './base.service';
 export class ProductService extends BaseService<Product> {
 
   override apiUrl: string = 'http://localhost:8081/products';
-  override pathUrl: string = "/products";
-  override name: string = "Products";
+  override baseUrl: string = "/products";
+  override listSuffix: string = "Products";
+  override formSuffix: string = "Product";  
   
   constructor(http: HttpClient) { 
     super(http);    

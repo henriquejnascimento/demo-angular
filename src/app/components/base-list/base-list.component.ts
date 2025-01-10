@@ -293,8 +293,8 @@ export class BaseListComponent implements AfterViewInit {
     console.log('Visualizando detalhes do item:', element);
   }
 
-  editItem(element: any) {
-    console.log('Editando item:', element);
+  editItem(element: any) {    
+    this.router.navigateByUrl(this.service.baseUrl + "/update/" + element.id)
   }
 
   deleteItem(id: any): void {    

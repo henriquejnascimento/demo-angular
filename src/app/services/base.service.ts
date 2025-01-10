@@ -10,15 +10,15 @@ import { Product } from '../models/product.model';
 export class BaseService<T> {
 
     apiUrl!: string;
-    pathUrl!: string;
-    name!: string;
+    baseUrl!: string;
+    listSuffix!: string;
+    formSuffix! :string;
     CONTENT_TYPE_HEADER = 'Content-Type';
     CONTENT_TYPE_JSON = 'application/json';
 
     constructor(protected http: HttpClient) {}
 
     delete(ids: any[]): Observable<void> {
-        console.log("BaseService > delete()");
         return this.http.delete<void>(this.apiUrl + "/deleteByIdList", {
           //headers: { CONTENT_TYPE_HEADER: this.CONTENT_TYPE_JSON },
           headers: { 'Content-Type': 'application/json' },  // Cabeçalho correto
@@ -29,4 +29,14 @@ export class BaseService<T> {
     create(product :Product): Observable<Product> {
       return this.http.post<Product>(this.apiUrl, product)
     }
+
+    findById(id: any):Observable<void> {
+      return this.http.get<void>(`${this.apiUrl}/${id}`);
+    }
+
+    updateById(id: any, updatedItem: T): Observable<T> {
+      return this.http.put<T>(`${this.apiUrl}/${id}`, updatedItem, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+  }    
 }

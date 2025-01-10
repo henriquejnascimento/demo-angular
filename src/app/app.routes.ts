@@ -5,8 +5,9 @@ import { ProductFormComponent } from './components/product-form/product-form.com
 
 export const routes: Routes = [
   {
-    path: 'test-menu',
-    component: MenuComponent
+    path: '',
+    redirectTo: '/products',
+    pathMatch: 'full'
   },
   {
     path: 'products',
@@ -15,10 +16,13 @@ export const routes: Routes = [
   {
     path: 'products/create',
     component: ProductFormComponent
-  },  
+  },
   {
-    path: '',
-    redirectTo: '/products',
-    pathMatch: 'full'
-  }
+    path: 'products/update/:id', 
+    component: ProductFormComponent 
+  },
+  {
+    path: 'test-menu',
+    component: MenuComponent
+  },
 ];

@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormFieldType } from '../../enums/form-field-type';
 import { FORM_INPUT_TYPE as EXTERNAL_FORM_INPUT_TYPE } from '../../constant/form-input-types';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BaseService } from '../../services/base.service';
 
 @Component({
@@ -52,16 +52,20 @@ export class BaseFormComponent implements OnInit {
   btnSubmitLabel :string = 'Save';
   isSubmitting :boolean = false;
   isNewRecord! :boolean;
+  error: string | null = null;
 
   constructor(
     service: BaseService<any>, 
     formBuilder: FormBuilder, 
-    private router: Router) {
+    private router: Router,
+    private activatedRoute: ActivatedRoute) {
     this.service = service;
     this.formBuilder = formBuilder;
   }
 
   ngOnInit(): void {
+    this.isNewRecord = this.getId() ? false : true;
+
     const formGroup: { [key: string]: any } = {};    
     this.fields.forEach(field => {
       const validators = field.validators ? field.validators : [];
@@ -73,15 +77,25 @@ export class BaseFormComponent implements OnInit {
 
     this.form = this.formBuilder.group(formGroup);
     this.updateFieldsOrdered();
+
+    this.updateForm();
   }
 
   onSubmit(): void {
     this.isSubmitting = true;
     if (this.form.valid) {
-      this.save();
+      if (this.isNewRecord) { 
+        this.save();
+      } else {
+        this.update();
+      }      
     } else {
       console.log('Formulário inválido');
     }
+  }
+
+  getId() {
+    return this.activatedRoute.snapshot.paramMap.get('id');
   }
 
   getErrorMessage(control: AbstractControl | null): string {
@@ -112,16 +126,48 @@ export class BaseFormComponent implements OnInit {
     });
   }
 
-  cancel() {    
-    const currentPath = window.location.pathname;
-    this.router.navigateByUrl(currentPath.substring(0, currentPath.lastIndexOf('/')));
+  cancel() {
+    this.router.navigateByUrl(this.service.baseUrl);
   }
   
   save() {
     this.service.create(this.form.value).subscribe(() => {
       this.form.reset();      
-      this.router.navigateByUrl(this.service.pathUrl)      
+      this.router.navigateByUrl(this.service.baseUrl)      
     });
+  }
+
+  updateForm() {
+    if (!this.isNewRecord) {
+      this.service.findById(this.getId())
+      .subscribe({
+        next: (product :any) => {
+          if (product) {            
+            this.fields.forEach(field => {              
+              if (field.name in product) {
+                field.value = product[field.name];
+              }
+            });
+        
+            this.form.patchValue(product);
+          }
+          
+          //this.loading = false;
+        },
+        error: (err) => {
+          this.error = 'Erro ao carregar o produto';
+          //this.loading = false;
+          console.error(err);
+        }
+      });      
+    }    
+  }
+
+  update() {
+    this.service.updateById(this.getId(), this.form.value).subscribe(() => {
+      this.form.reset();      
+      this.router.navigateByUrl(this.service.baseUrl)      
+    });    
   }
 
   isRequired(validators: ValidatorFn[] = []): boolean {
@@ -129,7 +175,9 @@ export class BaseFormComponent implements OnInit {
   }
 
   getTitle() {
-    return "Create " + this.service.name;
+    let titlePrefix :string;
+    titlePrefix = this.getId() ? "Update " : "Create ";    
+    return titlePrefix + this.service.formSuffix;
   }
 
 }
