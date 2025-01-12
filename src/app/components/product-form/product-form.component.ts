@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BaseFormComponent } from '../base-form/base-form.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { FormFieldType } from '../../enums/form-field-type';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
+import { ProductStatusService } from '../../services/product-status.service';
+import { ProductStatus } from '../../models/product-status.model';
 
 @Component({
   selector: 'app-product-form',
@@ -35,17 +37,18 @@ import { ProductService } from '../../services/product.service';
   templateUrl: './../base-form/base-form.component.html',
   styleUrl: './../base-form/base-form.component.scss'
 })
-export class ProductFormComponent extends BaseFormComponent {
+export class ProductFormComponent extends BaseFormComponent implements OnInit {
   override form!: FormGroup;        // TODO MOVE
-  override formBuilder: FormBuilder; // TODO MOVE
+  override formBuilder: FormBuilder; // TODO MOVE  
 
   constructor(
-    private productService: ProductService, 
+    productService: ProductService, 
+    private productStatusService: ProductStatusService,
     formBuilder: FormBuilder, 
     router: Router,
     activatedRoute: ActivatedRoute) {
     super(productService, formBuilder, router, activatedRoute);
-    this.formBuilder = formBuilder;    
+    this.formBuilder = formBuilder;
   }
   
   override fields: BaseField[] = [
@@ -93,23 +96,53 @@ export class ProductFormComponent extends BaseFormComponent {
 		  "type": FormFieldType.SELECT,
       "name": "status",
       "label": "Status",
-      //"value": "",
+      //"value": "1",
       "validators": [Validators.required],
       //"required": true,
       //"errorMessageRequiredField": "Campo obrigatório",
       //"disabled": true,
-      "data": [
-        { 
-          "value": "AVAILABLE",
-          "label": "Available"
-        },
-        { 
-          "value": "DAMAGED",
-          "label": "Damaged"
-        },        
-      ],
+      // "data": [],
+      // "data": [
+      //   { 
+      //     "value": "AVAILABLE",
+      //     "label": "Available"
+      //   },
+      //   { 
+      //     "value": "DAMAGED",
+      //     "label": "Damaged"
+      //   },        
+      // ],      
+      //"mappedBackendId": "id",
       "order": 3,
 	  },    
   ];  
+
+  updateFieldStatusData() {
+    this.productStatusService.getData().subscribe(
+      (response) => {        
+          const data = response.map((status: ProductStatus) => ({
+            value: status.id,
+            label: status.description
+          }));              
+          this.updateFieldData('status', data); // TODO refactor status to variable
+      },
+      (error) => {
+        console.error('Erro ao carregar status', error);
+      }
+    );
+  }
+  
+  updateFieldData(fieldName: string, data: any) {
+    const field = this.fields.find(f => f.name === fieldName);
+    if (field) {
+      field.data = data;
+    }    
+  }
+  
+  override ngOnInit(): void {    
+    super.ngOnInit();
+    this.updateFieldStatusData();
+  }
+
 }
 

@@ -1,6 +1,7 @@
 import { ValidatorFn } from '@angular/forms';
 import { FormFieldType } from '../enums/form-field-type';
 import { FormInputData } from './form-input-data';
+import { Observable } from 'rxjs';
 
 export class BaseField {
   type!: FormFieldType;
@@ -14,5 +15,7 @@ export class BaseField {
   class? :string;
   style? :string;
   order?: number;
-  data?: FormInputData[];
+  data?: FormInputData[] | any | Observable<any[]>;;
+  
+  //mappedBackendId?: string;
 }

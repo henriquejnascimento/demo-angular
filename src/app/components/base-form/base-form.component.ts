@@ -53,6 +53,7 @@ export class BaseFormComponent implements OnInit {
   isSubmitting :boolean = false;
   isNewRecord! :boolean;
   error: string | null = null;
+  isLoading = true;
 
   constructor(
     service: BaseService<any>, 
@@ -64,21 +65,22 @@ export class BaseFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.isNewRecord = this.getId() ? false : true;
+    (this.isNewRecord) ? this.createForm() : this.updateForm();   
+  }
 
-    const formGroup: { [key: string]: any } = {};    
+  createForm() {
+    const formGroup: { [key: string]: any } = {};
     this.fields.forEach(field => {
-      const validators = field.validators ? field.validators : [];
-        formGroup[field.name] = new FormControl(
-          { value: field.value || '', disabled: field.disabled || false },
-          validators
-        );
+      const validators = field.validators ? field.validators : [];  
+      formGroup[field.name] = new FormControl(
+        { value: field.value || '', disabled: field.disabled || false },
+        validators
+      );     
     });
 
-    this.form = this.formBuilder.group(formGroup);
-    this.updateFieldsOrdered();
-
-    this.updateForm();
+    this.finishPageRender(formGroup);
   }
 
   onSubmit(): void {
@@ -90,7 +92,7 @@ export class BaseFormComponent implements OnInit {
         this.update();
       }      
     } else {
-      console.log('Formulário inválido');
+      console.log('Invalid form');
     }
   }
 
@@ -130,7 +132,8 @@ export class BaseFormComponent implements OnInit {
     this.router.navigateByUrl(this.service.baseUrl);
   }
   
-  save() {
+  save() {    
+    this.normalizeFieldValues();    
     this.service.create(this.form.value).subscribe(() => {
       this.form.reset();      
       this.router.navigateByUrl(this.service.baseUrl)      
@@ -138,36 +141,57 @@ export class BaseFormComponent implements OnInit {
   }
 
   updateForm() {
-    if (!this.isNewRecord) {
-      this.service.findById(this.getId())
+    this.service.findById(this.getId())
       .subscribe({
-        next: (product :any) => {
-          if (product) {            
+        next: (obj: any) => {
+          if (obj) {            
+            const formGroup: { [key: string]: any } = {};
             this.fields.forEach(field => {              
-              if (field.name in product) {
-                field.value = product[field.name];
-              }
+                if (field.type === FormFieldType.SELECT) { // TODO add os outros tipos                  
+                  const selectValue = obj[field.name];
+                  field.value = selectValue.id;
+                } else {
+                  field.value = obj[field.name];
+                }              
+
+              const validators = field.validators || [];  
+              formGroup[field.name] = new FormControl(
+                { value: field.value || '', disabled: field.disabled || false },
+                validators
+              );
             });
-        
-            this.form.patchValue(product);
+
+            this.finishPageRender(formGroup);
           }
-          
-          //this.loading = false;
         },
         error: (err) => {
-          this.error = 'Erro ao carregar o produto';
-          //this.loading = false;
+          this.error = 'Error processing endpoint';
+          this.isLoading = false;
           console.error(err);
         }
-      });      
-    }    
+      });
+  }
+
+  finishPageRender(formGroup :any) {
+    this.form = this.formBuilder.group(formGroup);
+    this.updateFieldsOrdered();
+    this.isLoading = false;
   }
 
   update() {
+    this.normalizeFieldValues();
     this.service.updateById(this.getId(), this.form.value).subscribe(() => {
       this.form.reset();      
       this.router.navigateByUrl(this.service.baseUrl)      
     });    
+  }
+
+  normalizeFieldValues() {
+    this.fields.forEach(field => {
+      if (field.type === FormFieldType.SELECT) { 
+        this.form.value[field.name] = { "id": this.form.value[field.name] }
+      }
+    });
   }
 
   isRequired(validators: ValidatorFn[] = []): boolean {
