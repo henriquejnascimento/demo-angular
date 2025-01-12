@@ -1,69 +1,80 @@
-<h1>{{getTitle()}}</h1>
+<div *ngIf="isLoading">Loading...</div>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ng-container *ngFor="let field of fields">
-        <ng-container [ngSwitch]="field.type">
-            <mat-form-field *ngSwitchCase="(FORM_INPUT_TYPE.includes(field.type)) ? field.type : null">
-                <mat-label>{{field.label}}</mat-label>
-                <input matInput 
-                    [formControlName]="field.name" 
-                    [type]="field.type" 
-                    [name]="field.name"
-                    [placeholder]="field.placeholder || ''" 
-                    [mask]="field.mask || ''" 
-                    [class]="field.class || ''"
-                    [style]="field.style || ''"/>
-    
-                <!-- <mat-error *ngIf="form.get(field.name)?.hasError('required')"></mat-error> -->
-                <mat-error
-                    *ngIf="form.get(field.name)?.invalid && (form.get(field.name)?.dirty || form.get(field.name)?.touched)">
-                    {{ getErrorMessage(form.get(field.name)) }}
-                </mat-error>
-            </mat-form-field>
+<div *ngIf="!isLoading">
+    <h1>{{getTitle()}}</h1>
 
-            <mat-form-field *ngSwitchCase="'textarea'">
-                <mat-label>{{ field.label }}</mat-label>
-                <textarea matInput 
-                    [formControlName]="field.name" 
-                    [value]="field.value"
-                    [placeholder]="field.placeholder || ''">
-                </textarea>
-            </mat-form-field>
-
-            <ng-container *ngSwitchCase="'checkbox'">
-                <ng-container *ngFor="let data of field.data">
-                    <mat-checkbox 
-                        [formControlName]="data.value">
-                        {{data.label}}
-                    </mat-checkbox>
-                </ng-container>                
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'select'">
-                <mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <ng-container *ngFor="let field of fields">
+            <ng-container [ngSwitch]="field.type">
+                
+                <mat-form-field *ngSwitchCase="(FORM_INPUT_TYPE.includes(field.type)) ? field.type : null">
                     <mat-label>{{field.label}}</mat-label>
-                    <mat-select [formControlName]="field.name" [required]="isRequired(field.validators)">
-                        @for (data of field.data; track data) {
-                            <mat-option [value]="data.value">{{data.label}}</mat-option>
-                        }
-                    </mat-select>
+                    <input matInput 
+                        [formControlName]="field.name" 
+                        [type]="field.type" 
+                        [name]="field.name"
+                        [placeholder]="field.placeholder || ''" 
+                        [mask]="field.mask || ''" 
+                        [class]="field.class || ''"
+                        [style]="field.style || ''"/>
+        
+                    <!-- <mat-error *ngIf="form.get(field.name)?.hasError('required')"></mat-error> -->
+                    <mat-error
+                        *ngIf="form.get(field.name)?.invalid && (form.get(field.name)?.dirty || form.get(field.name)?.touched)">
+                        {{ getErrorMessage(form.get(field.name)) }}
+                    </mat-error>
                 </mat-form-field>
-            </ng-container>
 
-            <ng-container *ngSwitchCase="'radio'">
-                <mat-radio-group aria-label="Select an option">
+                <mat-form-field *ngSwitchCase="'textarea'">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <textarea matInput 
+                        [formControlName]="field.name" 
+                        [value]="field.value"
+                        [placeholder]="field.placeholder || ''">
+                    </textarea>
+                </mat-form-field>
+
+                <ng-container *ngSwitchCase="'checkbox'">
                     <ng-container *ngFor="let data of field.data">
-                        <mat-radio-button value="{{data.value}}">{{data.label}}</mat-radio-button>
-                    </ng-container>                    
-                </mat-radio-group>
+                        <mat-checkbox 
+                            [formControlName]="data.value">
+                            {{data.label}}
+                        </mat-checkbox>
+                    </ng-container>                
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'select'">
+                    <mat-form-field>
+                        <mat-label>{{field.label}}</mat-label>
+                        <mat-select [formControlName]="field.name" [required]="isRequired(field.validators)">
+                            <!-- @for (data of field.data; track data) {
+                                <mat-option [value]="data.value">{{data.label}}</mat-option>
+                            } -->
+                            <mat-option *ngFor="let data of field.data" [value]="data.value">{{data.label}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'radio'">
+                    <mat-radio-group aria-label="Select an option">
+                        <ng-container *ngFor="let data of field.data">
+                            <mat-radio-button value="{{data.value}}">{{data.label}}</mat-radio-button>
+                        </ng-container>                    
+                    </mat-radio-group>
+                </ng-container>
             </ng-container>
         </ng-container>
-    </ng-container>
 
-    <button (click)="cancel()" class="botao-cancelar" type="button">Cancel</button>
-    <button            
-      type="submit"
-      [disabled]="isSubmitting">
-      {{btnSubmitLabel}}
-    </button>    
-</form>
+        <button 
+            (click)="cancel()" 
+            class="botao-cancelar" 
+            type="button">
+            Cancel
+        </button>
+        <button            
+            type="submit"
+            [disabled]="isSubmitting">
+            {{btnSubmitLabel}}
+        </button>    
+    </form>
+</div>
